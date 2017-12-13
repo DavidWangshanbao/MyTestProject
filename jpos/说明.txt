@@ -1,0 +1,3 @@
+1.将以项目简称命名的文件夹放在F:\temp下    示例:ccxtd
+2.执行python replace_new.py  项目简称   示例：python replace_new.py ccxtd
+3.提交d:\jpos\docker\release\下的新提交文件
