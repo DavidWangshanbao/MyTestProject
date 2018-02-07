@@ -1,0 +1,12 @@
+-r requirements.txt
+mock
+mockito
+nose-html-reporting
+ddt
+should_dsl
+mkdocs
+proboscis
+Faker==0.8.6
+fudge==1.1.0
+pytest==3.2.0
+pytest_allure_adaptor==1.7.8

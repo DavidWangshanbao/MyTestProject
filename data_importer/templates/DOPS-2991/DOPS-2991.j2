@@ -1,0 +1,208 @@
+-- 创建存储过程
+CREATE PROCEDURE {{ dbname }}.delete_purchase (in remark_num varchar(100))
+BEGIN
+-- 需要定义接收游标数据的变量
+  DECLARE puuid varchar(38);
+  DECLARE pshop varchar(38);
+  DECLARE pshop_sku varchar(38);
+   -- 遍历数据结束标志
+  DECLARE done INT DEFAULT FALSE;
+  -- 游标
+  DECLARE data_curr CURSOR FOR select p.uuid, pl.shopSku, pl.shop from purchase p, purchaseline pl where p.uuid = pl.purchase and p.remark like concat('%', remark_num, '%');
+  -- 将结束标志绑定到游标
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  -- 打开游标
+  OPEN data_curr;
+
+  -- 开始循环
+  read_loop: LOOP
+    -- 提取游标里的数据，这里只有一个，多个的话也一样；
+    FETCH data_curr INTO puuid, pshop_sku, pshop;
+    -- 声明结束的时候
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+    -- 这里做你想做的循环的事件
+
+    SELECT pshop, pshop_sku;
+
+    -- 删除商品资料
+    delete from shopsku where uuid = pshop_sku and shop = pshop;
+    delete from merchantsku where shop = pshop and shopSku = pshop_sku;
+    delete from ShopSkuModifyLog where shop = pshop and shopSku = pshop_sku;
+
+    -- 删除商品属性资料
+    delete from shopskuimage where shop = pshop and shopSku = pshop_sku;
+    delete from shopskutagged where shop = pshop and shopSkuUuid = pshop_sku;
+
+    -- 删除库存相关
+    delete from inventory where shop = pshop and shopSku = pshop_sku;
+    delete from InventoryAdjustment where shop = pshop and shopSku = pshop_sku;
+
+  END LOOP read_loop;
+  -- 关闭游标
+  CLOSE data_curr;
+
+  -- 删除订货单以及明细
+  delete from purchaseline where purchase in (select distinct(uuid) from purchase where remark like concat('%', remark_num, '%'));
+  delete from purchase where remark like concat('%', remark_num, '%');
+
+  -- 删除待收货订货单以及明细
+  delete from pendingpurchaseline where purchase in (select distinct(uuid) from pendingPurchase where remark like concat('%', remark_num, '%'));
+  delete from pendingPurchase where remark like concat('%', remark_num, '%');
+
+  commit;
+END
+
+-- 执行存储过程
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000007');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000001');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000003');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000004');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000006');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000002');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000008');
+CALL {{ dbname }}.delete_purchase('20171113000024-20171113000024000005');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000002');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000003');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000004');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000005');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000007');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000006');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000009');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000008');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000010');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000012');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000011');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000001');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000003');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000002');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000005');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000006');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000007');
+CALL {{ dbname }}.delete_purchase('20171114000004-20171114000004000004');
+CALL {{ dbname }}.delete_purchase('20171114000009-20171114000009000001');
+CALL {{ dbname }}.delete_purchase('20171114000009-20171114000009000002');
+CALL {{ dbname }}.delete_purchase('20171114000009-20171114000009000003');
+CALL {{ dbname }}.delete_purchase('20171114000046-20171114000046000001');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000002');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000004');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000001');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000003');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000005');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000006');
+CALL {{ dbname }}.delete_purchase('20171114000054-20171114000054000007');
+CALL {{ dbname }}.delete_purchase('20171114000055-20171114000055000001');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000001');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000003');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000004');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000002');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000008');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000005');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000009');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000006');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000007');
+CALL {{ dbname }}.delete_purchase('20171114000060-20171114000060000010');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000001');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000002');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000003');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000004');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000005');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000006');
+CALL {{ dbname }}.delete_purchase('20171110000028-20171110000028000007');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000001');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000002');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000003');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000004');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000005');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000006');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000007');
+CALL {{ dbname }}.delete_purchase('20171110000030-20171110000030000008');
+CALL {{ dbname }}.delete_purchase('20171110000032-20171110000032000001');
+CALL {{ dbname }}.delete_purchase('20171110000032-20171110000032000002');
+CALL {{ dbname }}.delete_purchase('20171110000032-20171110000032000003');
+CALL {{ dbname }}.delete_purchase('20171110000032-20171110000032000004');
+CALL {{ dbname }}.delete_purchase('20171110000032-20171110000032000005');
+CALL {{ dbname }}.delete_purchase('20171110000032-20171110000032000006');
+CALL {{ dbname }}.delete_purchase('20171110000044-20171110000044000001');
+CALL {{ dbname }}.delete_purchase('20171110000044-20171110000044000002');
+CALL {{ dbname }}.delete_purchase('20171110000044-20171110000044000003');
+CALL {{ dbname }}.delete_purchase('20171110000044-20171110000044000004');
+CALL {{ dbname }}.delete_purchase('20171110000044-20171110000044000005');
+CALL {{ dbname }}.delete_purchase('20171110000045-20171110000045000001');
+CALL {{ dbname }}.delete_purchase('20171110000049-20171110000049000001');
+CALL {{ dbname }}.delete_purchase('20171111000001-20171111000001000001');
+CALL {{ dbname }}.delete_purchase('20171111000001-20171111000001000002');
+CALL {{ dbname }}.delete_purchase('20171111000008-20171111000008000001');
+CALL {{ dbname }}.delete_purchase('20171111000017-20171111000017000001');
+CALL {{ dbname }}.delete_purchase('20171111000017-20171111000017000002');
+CALL {{ dbname }}.delete_purchase('20171111000019-20171111000019000001');
+CALL {{ dbname }}.delete_purchase('20171111000021-20171111000021000001');
+CALL {{ dbname }}.delete_purchase('20171111000030-20171111000030000001');
+CALL {{ dbname }}.delete_purchase('20171111000030-20171111000030000002');
+CALL {{ dbname }}.delete_purchase('20171111000030-20171111000030000003');
+CALL {{ dbname }}.delete_purchase('20171111000030-20171111000030000004');
+CALL {{ dbname }}.delete_purchase('20171111000030-20171111000030000005');
+CALL {{ dbname }}.delete_purchase('20171111000030-20171111000030000006');
+CALL {{ dbname }}.delete_purchase('20171112000004-20171112000004000002');
+CALL {{ dbname }}.delete_purchase('20171112000004-20171112000004000001');
+CALL {{ dbname }}.delete_purchase('20171112000004-20171112000004000003');
+CALL {{ dbname }}.delete_purchase('20171112000004-20171112000004000004');
+CALL {{ dbname }}.delete_purchase('20171112000010-20171112000010000001');
+CALL {{ dbname }}.delete_purchase('20171112000011-20171112000011000001');
+CALL {{ dbname }}.delete_purchase('20171112000013-20171112000013000001');
+CALL {{ dbname }}.delete_purchase('20171112000024-20171112000024000001');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000001');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000002');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000003');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000004');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000005');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000006');
+CALL {{ dbname }}.delete_purchase('20171112000025-20171112000025000007');
+CALL {{ dbname }}.delete_purchase('20171112000028-20171112000028000001');
+CALL {{ dbname }}.delete_purchase('20171112000028-20171112000028000003');
+CALL {{ dbname }}.delete_purchase('20171112000028-20171112000028000004');
+CALL {{ dbname }}.delete_purchase('20171112000028-20171112000028000002');
+CALL {{ dbname }}.delete_purchase('20171112000029-20171112000029000001');
+CALL {{ dbname }}.delete_purchase('20171112000029-20171112000029000004');
+CALL {{ dbname }}.delete_purchase('20171112000029-20171112000029000003');
+CALL {{ dbname }}.delete_purchase('20171112000029-20171112000029000002');
+CALL {{ dbname }}.delete_purchase('20171112000031-20171112000031000001');
+CALL {{ dbname }}.delete_purchase('20171112000031-20171112000031000002');
+CALL {{ dbname }}.delete_purchase('20171112000031-20171112000031000003');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000002');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000005');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000007');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000008');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000004');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000001');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000006');
+CALL {{ dbname }}.delete_purchase('20171113000005-20171113000005000003');
+CALL {{ dbname }}.delete_purchase('20171113000010-20171113000010000001');
+CALL {{ dbname }}.delete_purchase('20171113000011-20171113000011000001');
+CALL {{ dbname }}.delete_purchase('20171113000013-20171113000013000001');
+CALL {{ dbname }}.delete_purchase('20171113000017-20171113000017000001');
+CALL {{ dbname }}.delete_purchase('20171113000025-20171113000025000001');
+CALL {{ dbname }}.delete_purchase('20171113000025-20171113000025000002');
+CALL {{ dbname }}.delete_purchase('20171113000025-20171113000025000003');
+CALL {{ dbname }}.delete_purchase('20171113000025-20171113000025000004');
+CALL {{ dbname }}.delete_purchase('20171113000025-20171113000025000005');
+CALL {{ dbname }}.delete_purchase('20171113000025-20171113000025000006');
+CALL {{ dbname }}.delete_purchase('20171113000026-20171113000026000001');
+CALL {{ dbname }}.delete_purchase('20171113000028-20171113000028000001');
+CALL {{ dbname }}.delete_purchase('20171113000029-20171113000029000001');
+CALL {{ dbname }}.delete_purchase('20171113000030-20171113000030000001');
+CALL {{ dbname }}.delete_purchase('20171113000031-20171113000031000001');
+CALL {{ dbname }}.delete_purchase('20171113000032-20171113000032000001');
+CALL {{ dbname }}.delete_purchase('20171113000035-20171113000035000001');
+CALL {{ dbname }}.delete_purchase('20171114000018-20171114000018000001');
+CALL {{ dbname }}.delete_purchase('20171114000020-20171114000020000001');
+CALL {{ dbname }}.delete_purchase('20171114000021-20171114000021000001');
+CALL {{ dbname }}.delete_purchase('20171114000031-20171114000031000001');
+CALL {{ dbname }}.delete_purchase('20171114000035-20171114000035000001');
+CALL {{ dbname }}.delete_purchase('20171114000036-20171114000036000001');
+CALL {{ dbname }}.delete_purchase('20171114000037-20171114000037000001');
+CALL {{ dbname }}.delete_purchase('20171114000041-20171114000041000001');
+
+-- 删除存储过程
+drop procedure {{ dbname }}.delete_purchase;

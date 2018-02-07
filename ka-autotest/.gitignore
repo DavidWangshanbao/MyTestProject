@@ -1,0 +1,14 @@
+.idea 
+*.pyc
+logs
+*.zip
+tracelogdnet*
+/logs/
+/site/
+/out/
+/allure-report/
+
+ .vscode-upload.json
+.coverage
+.vscode/*
+.cache

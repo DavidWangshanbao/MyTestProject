@@ -1,0 +1,78 @@
+#------------------------------------------------------------------
+#--------------------执行前请修改要执行的{{ dbname }}字----------------
+#------------------------------------------------------------------
+delimiter //
+
+-- 创建存储过程
+CREATE PROCEDURE {{ dbname }}.delete_purchase (in remark_num varchar(100))
+BEGIN
+-- 需要定义接收游标数据的变量
+  DECLARE puuid varchar(38);
+  DECLARE pshop varchar(38);
+  DECLARE pshop_sku varchar(38);
+   -- 遍历数据结束标志
+  DECLARE done INT DEFAULT FALSE;
+  -- 游标
+  DECLARE data_curr CURSOR FOR select p.uuid, pl.shopSku, pl.shop from purchase p, purchaseline pl where p.uuid = pl.purchase and p.remark like concat('%', remark_num, '%');
+  -- 将结束标志绑定到游标
+  DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+  -- 打开游标
+  OPEN data_curr;
+
+  -- 开始循环
+  read_loop: LOOP
+    -- 提取游标里的数据，这里只有一个，多个的话也一样；
+    FETCH data_curr INTO puuid, pshop_sku, pshop;
+    -- 声明结束的时候
+    IF done THEN
+      LEAVE read_loop;
+    END IF;
+    -- 这里做你想做的循环的事件
+
+    SELECT pshop, pshop_sku;
+
+    -- 删除商品资料
+    delete from shopsku where uuid = pshop_sku and shop = pshop;
+    delete from merchantsku where shop = pshop and shopSku = pshop_sku;
+    delete from ShopSkuModifyLog where shop = pshop and shopSku = pshop_sku;
+
+    -- 删除商品属性资料
+    delete from shopskuimage where shop = pshop and shopSku = pshop_sku;
+    delete from shopskutagged where shop = pshop and shopSkuUuid = pshop_sku;
+
+    -- 删除库存相关
+    delete from inventory where shop = pshop and shopSku = pshop_sku;
+    delete from InventoryAdjustment where shop = pshop and shopSku = pshop_sku;
+
+	-- 删除商品收藏夹
+	delete from skufavorite where shop = pshop and shopSku = pshop_sku;
+
+  END LOOP read_loop;
+  -- 关闭游标
+  CLOSE data_curr;
+
+  -- 删除订货单以及明细
+  delete from purchaseline where purchase in (select distinct(uuid) from purchase where remark like concat('%', remark_num, '%'));
+  delete from purchase where remark like concat('%', remark_num, '%');
+
+  -- 删除待收货订货单以及明细
+  delete from pendingpurchaseline where purchase in (select distinct(uuid) from pendingPurchase where remark like concat('%', remark_num, '%'));
+  delete from pendingPurchase where remark like concat('%', remark_num, '%');
+
+  commit;
+END;
+//
+delimiter ;
+-- 执行存储过程
+CALL {{ dbname }}.delete_purchase('gdbl365242017112331-PKG20171123000360');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112310-PKG20171123000350');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112215-PKG20171123000321');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112215-PKG20171123000322');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112215-PKG20171123000323');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112216-PKG20171123000324');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112216-PKG20171123000326');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112317-PKG20171123000353');
+CALL {{ dbname }}.delete_purchase('gdbl365242017112334-PKG20171123000362');
+
+-- 删除存储过程
+drop procedure {{ dbname }}.delete_purchase;

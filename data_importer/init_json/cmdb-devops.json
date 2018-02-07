@@ -1,0 +1,10 @@
+{
+	"datasource":{
+		"host":"rm-bp1vbelk4ehc6evsu.mysql.rds.aliyuncs.com",
+		"db":"dcmdb",
+		"user":"dcmdb",
+		"password":"77UoQ7MmPTq1a5hF",
+		"charset":"utf8",
+		"port" : 3306
+	}
+}

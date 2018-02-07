@@ -1,0 +1,204 @@
+active_profile: integration_test
+base_profile: integration_test
+product: scm
+dockerhub:
+    - "https://{0}/uidnet" # base_url format
+    - 'dnet'  #user name
+    - "ThlVjVebSKB5oTZ5" #password
+email_settings: &email_settings
+    default_subject: "供应链日常巡检错误"
+    from: '千帆分销运维平台'
+# logstash配置
+logstash :
+    logstash_non_production : &logstash_non_production
+       url : "https://logstash-test.1000sails.com:8904/"
+       user : "logstash"
+       password : "aoDJ0JVgkfNPjarn"
+    logstash_production : &logstash_production
+       url : "https://logstash.1000sails.com:8704/"
+       user : "logstash"
+       password : "aoDJ0JVgkfNPjarn"
+
+#ElasticSearch配置
+elasticsearch :
+      elasticsearch_non_production: &elasticsearch_non_production
+          host : "118.178.91.70"
+          port : "9200"
+          user : "admin"
+          password : "www.hd123.com"
+      elasticsearch_production: &elasticsearch_production
+          host : "118.178.86.92"
+          port : "9200"
+          user : "admin"
+          password : "www.hd123.com"
+healthcheck: &healthcheck
+      5101-server : "healchecktest"
+
+infrastructure_systems:
+      filebeat: &filebeat
+               version : 1.2.2_redis
+               images : [filebeat]
+               labels:
+                  deployment: 'default'
+      logstash: &logstash
+               version : 2.3.2
+               images : [logstash]
+               labels:
+                  deployment: 'default'
+      elasticsearch: &elasticsearch
+               version : 2.3.2
+               images : [elasticsearch]
+               labels:
+                  deployment: 'default'
+      kibana: &kibana
+               version : 4.5.0
+               images : [kibana]
+               labels:
+                  deployment: 'default'
+      zookeeper: &zookeeper
+               version : "dly_3.4.6"
+               images : [zookeeper]
+               labels:
+                  deployment: 'default'
+      redis: &redis
+               version : "dly_3.0.7"
+               images : [redis]
+               labels:
+                  deployment: 'default'
+
+rds_upgrade : &rds_upgrade
+      scminvcrdbsetup :
+         scminvcrdbsetup: &scminvcrdbsetup
+           image : scminvcrdbsetup
+           stack_type : plat
+           prefix : "scm"
+         system : "invc"
+      scminvcrdbupgrade :
+         scminvcrdbupgrade: &scminvcrdbupgrade
+           image : scminvcrdbupgrade
+           stack_type : plat
+           prefix : "scm"
+         system : "invc"
+      scmserverrdbsetup :
+         scmserverrdbsetup: &scmserverrdbsetup
+           image : scmserverrdbsetup
+           stack_type : plat
+           prefix : "scm"
+         system : "server"
+      scmserverrdbupgrade :
+         scmserverrdbupgrade: &scmserverrdbupgrade
+           image : scmserverrdbupgrade
+           stack_type : plat
+           prefix : "scm"
+         system : "server"
+      scmaccountrdbupgrade :
+         scmaccountrdbupgrade: &scmaccountrdbupgrade
+           image : scmaccountrdbupgrade
+           stack_type : plat
+           prefix : "scm"
+         system : "account"
+scm_systems:
+
+# DOPS-794
+# 包含组件: account+address+config+oss+trace
+      commonsa_system : &commonsa_system
+               images : [scmcommonsa]
+               labels:
+                  deployment: 'default'
+# 包含组件: notify+sms
+      commonsb_system : &commonsb_system
+               images : [scmcommonsb]
+               labels:
+                  deployment: 'default'
+      push_system : &push_system
+               images : [scmpush]
+               labels:
+                  deployment: 'default'
+      invc_system : &invc_system
+               images : [scminvc]
+               rds_upgrade: *scminvcrdbupgrade
+               labels:
+                  deployment: 'default'
+      cvt_system : &cvt_system
+               images : [scmcvt]
+               labels:
+                  deployment: 'default'
+      server_system : &server_system
+               images : [scmserver]
+               rds_upgrade: *scmserverrdbupgrade
+               labels:
+                  deployment: 'default'
+# 包含组件: operator-web+loginb
+      operatorweb_system : &operatorweb_system
+               images : [scmoperatorweb ]
+               labels:
+                  deployment: 'default'
+      operatorlogin_system : &operatorlogin_system
+               images : [ scmoperatorlogin]
+               labels:
+                  deployment: 'default'
+# 包含组件: vendor-web+vendor-login
+      vendorweb_system : &vendorweb_system
+               images : [scmvendorweb ]
+               labels:
+                  deployment: 'default'
+      vendorlogin_system : &vendorlogin_system
+               images : [scmvendorlogin]
+               labels:
+                  deployment: 'default'
+      account_system : &account_system
+               images : [scmaccount]
+               rds_upgrade: *scmaccountrdbupgrade
+               labels:
+                  deployment: 'default'
+      storeweb_system : &storeweb_system
+               images : [scmstoreweb]
+               labels:
+                  deployment: 'default'
+      sequence_system : &sequence_system
+               images : [scmsequence]
+               labels:
+                  deployment: 'default'
+      console_system : &console_system
+               images : [scmconsole]
+               labels:
+                  deployment: 'default'
+      consoleweb_system : &consoleweb_system
+               images : [scmconsoleweb]
+               labels:
+                  deployment: 'default'
+
+profile_default: &profile_default
+#   scm_version: *dnet_version
+   logstash: *logstash_non_production
+   elasticsearch: *elasticsearch_non_production
+   cmdb_cfg : null
+   stack_environment : null
+   healthcheck: *healthcheck
+#   ssh_port: "60501"
+   inventory: &inventory
+      filebeat: *filebeat
+      logstash: *logstash
+      elasticsearch: *elasticsearch
+      kibana: *kibana
+
+#集成测试
+integration_test:
+    <<: *profile_default
+    stack_environment: integration_test
+    cmdb_cfg : "init_json/scm/cmdb.json"
+
+performance_test :
+    stack_environment: performance_test
+
+uat:
+    stack_environment: uat
+    cmdb_cfg : "init_json/scm/cmdb-uat.json"
+
+branch_test:
+    stack_environment: branch_test
+    cmdb_cfg : "init_json/scm/cmdb-branch.json"
+
+production:
+    stack_environment: production
+    cmdb_cfg : "init_json/scm/cmdb-production.json"

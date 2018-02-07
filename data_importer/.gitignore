@@ -1,0 +1,26 @@
+.idea
+.cache/*
+*.pyc
+oss_resources
+logs
+qianfan_resources*/
+*.zip
+tracelogdnet*
+/tracelogs/*
+/logs/
+/site/
+dailycheck.html
+dailycheck.md
+envs/*
+active_profile.json
+logAnalysis.txt
+ .vscode-upload.json
+.coverage
+cover/
+nosetests.xml
+active_docker_profile.json
+init_json/cmdb_sqlgenerator.sql
+.vscode-upload.json
+.vscode/*
+allure-report/
+out/

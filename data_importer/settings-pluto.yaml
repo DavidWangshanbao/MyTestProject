@@ -1,0 +1,139 @@
+## DOPS-2967
+active_profile: integration_test
+base_profile: integration_test
+product: pluto
+dockerhub:
+    - "https://{0}/ui" # base_url format
+    - 'dly'  #user name
+    - "4nv8bRsCCWsPYuyq" #password
+email_settings: &email_settings
+    default_subject: "鼎力云发票日常巡检错误"
+    from: '鼎力云运维平台'
+
+# logstash配置
+logstash :
+    logstash_non_production : &logstash_non_production
+       url : "https://logstash-test.1000sails.com:8904/"
+       user : "logstash"
+       password : "aoDJ0JVgkfNPjarn"
+    logstash_production : &logstash_production
+       url : "https://logstash.1000sails.com:8704/"
+       user : "logstash"
+       password : "aoDJ0JVgkfNPjarn"
+
+#ElasticSearch配置
+elasticsearch :
+      elasticsearch_non_production: &elasticsearch_non_production
+          host : "139.129.200.138"
+          port : "9200"
+          user : "kibana_user01"
+          password : "hd@123.com"
+      elasticsearch_production: &elasticsearch_production
+          host : "139.129.200.138"
+          port : "9200"
+          user : "kibana_user01"
+          password : "hd@123.com"
+
+healthcheck: &healthcheck
+      #[url,timeout]
+      pluto-server : ["member-server/rest/checkService/check?sensitive=true",15,True]
+      pluto-web : ["equity-server/rest/checkService/check?sensitive=true",15,True]
+      pluto-mobile : ["promotion-server/rest/checkService/check?sensitive=true",15,True]
+
+rds_upgrade : &rds_upgrade
+#      member-rdb-upgrade :
+#        member-rdb-upgrade : &member-rdb-upgrade
+##             image : member-rdb-upgrade
+#        system: "pluto"
+
+infrastructure_systems:
+      filebeat: &filebeat
+               version : 1.2.2
+               images : [filebeat]
+               labels:
+                  deployment: 'default'
+      logstash: &logstash
+               version : 2.3.2
+               images : [logstash]
+               labels:
+                  deployment: 'default'
+      elasticsearch: &elasticsearch
+               version : 2.4.2
+               images : [elasticsearch]
+               labels:
+                  deployment: 'default'
+      kibana: &kibana
+               version : 4.5.0
+               images : [kibana]
+               labels:
+                  deployment: 'default'
+      zookeeper: &zookeeper
+               version : "dly_3.4.6"
+               images : [zookeeper]
+               labels:
+                  deployment: 'default'
+      redis: &redis
+               version : "dly_3.0.7"
+               images : [redis]
+               labels:
+                  deployment: 'default'
+
+pluto_systems:
+#鼎力云发票
+      pluto_system:  &pluto_system
+               images : [pluto-server,pluto-web,pluto-mobile-server]
+#               rds_upgrade :
+               labels:
+                  deployment: 'default'
+
+      pluto_ui_mobile:  &pluto_ui_mobile
+               images : [pluto-ui-mobile]
+#               rds_upgrade :
+               labels:
+                  deployment: 'default'
+
+      pluto_ui_web:  &pluto_ui_web
+               images : [pluto-ui-web]
+#               rds_upgrade :
+               labels:
+                  deployment: 'default'
+
+
+profile_default: &profile_default
+#   dnet_version: *dnet_version
+   logstash: *logstash_non_production
+   elasticsearch: *elasticsearch_non_production
+   cmdb_cfg : null
+   environment : null
+#   healthcheckmns : *healthcheckmns
+   healthcheck: *healthcheck
+   inventory: &inventory
+      filebeat: *filebeat
+      logstash: *logstash
+      elasticsearch: *elasticsearch
+      kibana: *kibana
+      zookeeper: *zookeeper
+      redis: *redis
+#      cmdb:
+#          <<: *cmdb_system
+#          version: "0.1-SNAPSHOT"
+
+
+integration_test:
+    <<: *profile_default
+    stack_environment: pluto_integration
+    cmdb_cfg : "init_json/pluto/cmdb.json"
+
+uat:
+    stack_environment: pluto_uat
+    cmdb_cfg : "init_json/pluto/cmdb-uat.json"
+
+
+branch_test:
+    stack_environment: pluto_branch
+    cmdb_cfg : "init_json/pluto/cmdb-branch.json"
+
+
+production:
+    stack_environment: pluto_production
+    cmdb_cfg : "init_json/pluto/cmdb-production.json"

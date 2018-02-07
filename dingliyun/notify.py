@@ -1,5 +1,9 @@
 #!/usr/bin/python
 #coding=utf-8
+
+'''
+    重推消息脚本
+'''
 from __future__ import unicode_literals,print_function
 import sys
 import os

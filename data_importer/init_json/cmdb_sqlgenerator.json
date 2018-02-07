@@ -1,0 +1,73 @@
+{
+  "dockerHub": {
+    "username":"dnet" ,
+    "url" : "dockerhub.1000sails.com" ,
+    "password" : "ThlVjVebSKB5oTZ5"
+  },
+  "stack": {
+    "id" : "h01h" ,
+    "type": "tenant",
+    "environment": "dnet",
+    "dbCount": 1,
+    "shopCountPerDb": 0,
+    "currentShopCount": 0
+  },
+  "oss": [
+    {
+      "url": "https://dpos-image.qianfan123.com",
+      "internalurl": "http://img-cn-hangzhou.aliyuncs.com",
+      "bucketName": "dpos",
+      "objectBaseUrl": "https://dpos-image.qianfan123.com",
+      "image":"payman-web"
+    }
+  ],
+  "redis": [
+    {
+      "publicIp":   "bae978bf05df4089.redis.rds.aliyuncs.com",
+      "intranetIp": "bae978bf05df4089.redis.rds.aliyuncs.com",
+      "port": "6379",
+      "password": "GeB59hLVCp4gT28g",
+      "image": "showwin-web",
+      "db": "23"
+    },{
+      "publicIp":   "bae978bf05df4089.redis.rds.aliyuncs.com",
+      "intranetIp": "bae978bf05df4089.redis.rds.aliyuncs.com",
+      "port": "6379",
+      "password": "GeB59hLVCp4gT28g",
+      "image": "adapter-sms-web",
+      "db": "24"
+    }
+
+  ],
+  "opensearch": [
+
+  ],
+  "hostsCfg": {
+    "ips": [
+      ["114.55.249.173","10.28.12.6","i-bp1bopxrlqc6jcg2im36"] ,["114.55.248.190","10.27.214.199","i-bp1bopxrlqc6jcg2im34"]
+    ]
+  },
+  "containerCfg": {
+    "start_port": 8001,
+    "ips": [
+      {
+        "114.55.249.173": [
+          {"image" : "payman-web" ,"tags" : "blue"}
+        ],
+        "114.55.248.190": [
+          {"image" : "payman-web" ,"tags" : "green"}
+        ]
+      }
+    ]
+  },
+  "rds": [
+    {
+      "ip": "rm-bp1a68rd7083j763j.mysql.rds.aliyuncs.com",
+      "port": 3306,
+      "prefix" : "pm" ,
+      "username": "pm0",
+      "password": "FqHXw73RCEadmOt8",
+      "rdsInstanceId": "rm-bp1a68rd7083j763j"
+    }
+  ]
+}

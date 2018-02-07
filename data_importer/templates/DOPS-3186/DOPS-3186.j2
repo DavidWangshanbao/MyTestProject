@@ -1,0 +1,57 @@
+
+/* 备份 进货单供应商  相关异常数据 */
+drop table if exists contact_bck20171121;
+CREATE TABLE contact_bck20171121 (
+SELECT * FROM contact
+);
+drop table if exists contacttagged_bck20171121;
+CREATE TABLE contacttagged_bck20171121 (
+SELECT * FROM contacttagged
+);
+drop table if exists purchase_bck20171121;
+CREATE TABLE purchase_bck20171121 (
+SELECT * FROM purchase
+);
+
+/* 删除 进货单 供应商（contact）  相关异常数据 */
+
+delete FROM contact WHERE uuid in (
+select cUUid from(
+SELECT REPLACE(c.uuid,SUBSTRING_INDEX(c.uuid, "-", 2),SUBSTRING_INDEX(c.uuid, "-", 1)) AS cUuid FROM contact AS c
+WHERE SUBSTRING_INDEX(c.uuid, "-", 1) = SUBSTRING_INDEX((SUBSTRING_INDEX(c.uuid, "-", 2)), "-", -1) AND CHAR_LENGTH(c.uuid) > 8
+) as a);
+
+
+/* 修正 进货单 供应商  相关异常数据 */
+
+UPDATE contact SET uuid=REPLACE(uuid,SUBSTRING_INDEX(uuid, "-", 2),SUBSTRING_INDEX(uuid, "-", 1)) , lastModified=NOW()
+WHERE SUBSTRING_INDEX(uuid, "-", 1) = SUBSTRING_INDEX((SUBSTRING_INDEX(uuid, "-", 2)), "-", -1) AND CHAR_LENGTH(uuid) > 8;
+
+UPDATE purchase SET supplier=REPLACE(supplier,SUBSTRING_INDEX(supplier, "-", 2),SUBSTRING_INDEX(supplier, "-", 1)) , lastModified=NOW()
+WHERE SUBSTRING_INDEX(supplier, "-", 1) = SUBSTRING_INDEX((SUBSTRING_INDEX(supplier, "-", 2)), "-", -1) AND CHAR_LENGTH(supplier) > 8;
+
+/* 由于contactUuid与tagName的unique键，所以先把重复的删除 */
+delete from contacttagged where uuid in(select c.uuid from (select b.uuid as uuid from contacttagged as a, (SELECT
+	REPLACE (
+		contactUuid,
+		SUBSTRING_INDEX(contactUuid, "-", 2),
+		SUBSTRING_INDEX(contactUuid, "-", 1)
+	) as contactUuid,
+	tagName,
+	uuid
+FROM
+	contacttagged
+WHERE
+	SUBSTRING_INDEX(contactUuid, "-", 1) = SUBSTRING_INDEX(
+		(
+			SUBSTRING_INDEX(contactUuid, "-", 2)
+		),
+		"-",
+		- 1
+	)
+AND CHAR_LENGTH(contactUuid) > 8) as b where a.contactUuid = b.contactUuid) as c);
+
+UPDATE contacttagged SET contactUuid=REPLACE(contactUuid,SUBSTRING_INDEX(contactUuid, "-", 2),SUBSTRING_INDEX(contactUuid, "-", 1)) , lastModified=NOW()
+WHERE SUBSTRING_INDEX(contactUuid, "-", 1) = SUBSTRING_INDEX((SUBSTRING_INDEX(contactUuid, "-", 2)), "-", -1) AND CHAR_LENGTH(contactUuid) > 8;
+
+select "sucess" as result from dual;

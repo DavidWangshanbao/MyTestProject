@@ -1,0 +1,8 @@
+[localhost]
+127.0.0.1 ansible_connection=local
+
+[test1]
+172.17.12.32 ansible_connection=ssh ansible_user=root ansible_port=22
+
+[test2]
+172.17.11.41 ansible_connection=ssh ansible_user=dnet ansible_port=22

@@ -1,0 +1,333 @@
+active_profile: integration_test
+base_profile: integration_test
+product: dly
+dockerhub:
+    - "https://{0}/ui" # base_url format
+    - 'dly'  #user name
+    - "4nv8bRsCCWsPYuyq" #password
+email_settings: &email_settings
+    default_subject: "鼎力云日常巡检错误"
+    from: '鼎力云运维平台'
+azkaban: &azkaban
+    -   config:
+          - 'https://114.55.188.19:18088' #base url
+          - 'azkaban' #user
+          - "3JCcxDnY1OSZgiCp" #password
+        monitors:
+    #        project, jobid
+          - ['j_etl_cppayorder_toftpserver',"etl_cppayorder_toftpserver"]
+          - ['k_etl_cppayorder_toftpserver_mcyp',"etl_cppayorder_toftpserver_mcyp"]
+          - ['l_etl_dpos_toftpserver',"etl_dpos_toftpserver"]
+          - ['m_etl_dpos_extract2pg',"ETL_DPOS_EXTRACT2POSTGRESQL"]
+    -   config:
+          - 'https://172.17.10.52:8443' #base url
+          - 'azkaban' #user
+          - "azkaban" #password
+        monitors:
+    #        project, jobid
+          - ['a_load_cppayorder_intohawq',"hawq_load_cppayorder"]
+          - ['b_load_data_daily_fromftpserver',"hawq_load_data_daily"]
+          - ['c_load_basicdata_fromftp',"hawq_load_basicdata"]
+          - ['d_load_dposdata_fromftp',"hawq_load_data_daily_DPOS"]
+          - ['f_etl_ka_2_wanda',"etl_ka_2_wanda"]
+          - ['dly_send_datareport_daily',"dly_send_datareport_daily"]
+
+# logstash配置
+logstash :
+    logstash_non_production : &logstash_non_production
+       url : "https://logstash-test.1000sails.com:8904/"
+       user : "logstash"
+       password : "aoDJ0JVgkfNPjarn"
+    logstash_production : &logstash_production
+       url : "https://logstash.1000sails.com:8704/"
+       user : "logstash"
+       password : "aoDJ0JVgkfNPjarn"
+
+#ElasticSearch配置
+elasticsearch :
+      elasticsearch_non_production: &elasticsearch_non_production
+          host : "139.129.200.138"
+          port : "9200"
+          user : "kibana_user01"
+          password : "hd@123.com"
+      elasticsearch_production: &elasticsearch_production
+          host : "139.129.200.138"
+          port : "9200"
+          user : "kibana_user01"
+          password : "hd@123.com"
+healthcheck: &healthcheck
+      #[url,timeout]
+      member-server : ["member-server/rest/checkService/check?sensitive=true",15,True]
+      equity-server : ["equity-server/rest/checkService/check?sensitive=true",15,True]
+      promotion-server : ["promotion-server/rest/checkService/check?sensitive=true",15,True]
+      wxauth-server : ["wxauth-server/rest/checkService/check?sensitive=true",15,True]
+      crm-server : ["crm-server/rest/testbn01/checkService/check?sensitive=true",15,True]
+      mgate-server : ["mgate-server/rest/checkService/check?sensitive=true",15,True]
+      crm-web: ["crm-web/checkService/check.hd?sensitive=true",15,True]
+      member-h5: ["member-h5/checkService/check?sensitive=true",15,True]
+      mbr-web: ["mbr-web/checkService/check.hd?sensitive=true",15,True]
+
+rds_upgrade : &rds_upgrade
+      member-rdb-upgrade :
+        member-rdb-upgrade : &member-rdb-upgrade
+             image : member-rdb-upgrade
+        system: "member"
+      crm-rdb-upgrade :
+        crm-rdb-upgrade : &crm-rdb-upgrade
+             image : crm-rdb-upgrade
+        system: "crm"
+      equity-rdb-upgrade :
+        equity-rdb-upgrade : &equity-rdb-upgrade
+             image : equity-rdb-upgrade
+        system: "equity"
+      mgate-rdb-upgrade :
+        mgate-rdb-upgrade : &mgate-rdb-upgrade
+             image : mgate-rdb-upgrade
+        system: "mgate"
+      promotion-rdb-upgrade :
+        promotion-rdb-upgrade : &promotion-rdb-upgrade
+             image : promotion-rdb-upgrade
+        system: "promotion"
+      wxauth-rdb-upgrade :
+        wxauth-rdb-upgrade : &wxauth-rdb-upgrade
+             image : wxauth-rdb-upgrade
+        system: "wxauth"
+
+infrastructure_systems:
+      filebeat: &filebeat
+               version : 1.2.2
+               images : [filebeat]
+               labels:
+                  deployment: 'default'
+      logstash: &logstash
+               version : 2.3.2
+               images : [logstash]
+               labels:
+                  deployment: 'default'
+      elasticsearch: &elasticsearch
+               version : 2.4.2
+               images : [elasticsearch]
+               labels:
+                  deployment: 'default'
+      kibana: &kibana
+               version : 4.5.0
+               images : [kibana]
+               labels:
+                  deployment: 'default'
+      zookeeper: &zookeeper
+               version : "dly_3.4.6"
+               images : [zookeeper]
+               labels:
+                  deployment: 'default'
+      redis: &redis
+               version : "dly_3.0.7"
+               images : [redis]
+               labels:
+                  deployment: 'default'
+
+#  可能会有不同环境的部署中，存在不一样的配置
+docker_image_dynamic_conditions:
+      # DOPS-1059
+      enable_customize_access_service_url: &enable_customize_access_service_url false
+      enable_customize_config_service_url: &enable_customize_config_service_url false
+      enable_customize_config_directoryService_url: &enable_customize_config_directoryService_url false
+
+dly_systems:
+      weixin_card_web: &weixin_card_web
+               images : ["cards-web"]
+               labels:
+                  deployment: 'default'
+
+# 支付中心
+      pay_auth : &pay_auth
+               images : [pay_auth]
+               labels:
+                  deployment: 'default'
+      pay_console : &pay_console
+               images : [pay_console]
+               labels:
+                  deployment: 'default'
+      pay_proxy_server : &pay_proxy_server
+               images : [pay_proxy_server]
+               labels:
+                  deployment: 'default'
+      pay_report : &pay_report
+               images : [pay_report]
+               labels:
+                  deployment: 'default'
+      pay_server : &pay_server
+               images : [pay_server]
+               labels:
+                  deployment: 'default'
+      pay_store : &pay_store
+               images : [pay_store]
+               labels:
+                  deployment: 'default'
+      pay_web : &pay_web
+               images : [pay_web]
+               labels:
+                  deployment: 'default'
+      pp_pay : &pp_pay
+               images : [pp_pay]
+               labels:
+                  deployment: 'default'
+#会员
+      crm:  &crm
+               images : [crm-server]
+               upstream_http: server_paymember_new
+               upstream_https: server_paymember_new_ssl
+               rds_upgrade : *crm-rdb-upgrade
+               labels:
+                  deployment: 'default'
+      crm_web:  &crm_web
+               images : [crm-web]
+               labels:
+                  deployment: 'default'
+      mbr_web: &mbr_web
+               images : [mbr-web]
+               labels:
+                  deployment: 'default'
+      equity:  &equity
+               images : [equity-server]
+               rds_upgrade : *equity-rdb-upgrade
+               labels:
+                  deployment: 'default'
+      member:  &member
+               images : [member-server]
+               rds_upgrade : *member-rdb-upgrade
+               labels:
+                  deployment: 'default'
+      h5:  &h5
+               images : [member-h5]
+               labels:
+                  deployment: 'default'
+      mgate:  &mgate
+               images : [mgate-server]
+               rds_upgrade : *mgate-rdb-upgrade
+               labels:
+                  deployment: 'default'
+      promotion:  &promotion
+               images : [promotion-server]
+               rds_upgrade : *promotion-rdb-upgrade
+               labels:
+                  deployment: 'default'
+      wxauth:  &wxauth
+               images : [wxauth-server]
+               rds_upgrade : *wxauth-rdb-upgrade
+               labels:
+                  deployment: 'default'
+      weixin_demo:  &weixin_demo
+               images : [weixin-demo]
+               labels:
+                  deployment: 'default'
+      account:  &account
+               images : [account-server]
+               labels:
+                  deployment: 'default'
+      account_config_storeauth: &account_config_storeauth
+               images : [account_config_storeauth_merchant-server]
+               labels:
+                  deployment: 'default'
+      storeauth: &storeauth
+               images : [storeauth-server]
+               labels:
+                  deployment: 'default'
+      notify: &notify
+               images : [notify-server]
+               labels:
+                  deployment: 'default'
+      login: &login
+               images : [login-server]
+               labels:
+                  deployment: 'default'
+      ucenter_web: &ucenter_web
+               images : [ucenter-web]
+               labels:
+                  deployment: 'default'
+
+      littlez:  &littlez
+               images : [ littlez-service ]
+               labels:
+                  deployment: 'default'
+
+      littlezweb:  &littlezweb
+               images : [littlezweb]
+               labels:
+                  deployment: 'default'
+      waltzcloud:  &waltzcloud
+               images : [waltz-cloud-registry]
+               labels:
+                  deployment: 'default'
+      dpos-exchange-service:  &dpos-exchange-service
+               images : [ dpos-exchange-service ]
+               labels:
+                  deployment: 'default'
+      littlezh5:  &littlezh5
+               images : [ littlezh5 ]
+               labels:
+                  deployment: 'default'
+
+
+profile_default: &profile_default
+#   dnet_version: *dnet_version
+   logstash: *logstash_non_production
+   azkaban: *azkaban
+   elasticsearch: *elasticsearch_non_production
+   cmdb_cfg : null
+   environment : null
+#   healthcheckmns : *healthcheckmns
+   healthcheck: *healthcheck
+   inventory: &inventory
+      filebeat: *filebeat
+      logstash: *logstash
+      elasticsearch: *elasticsearch
+      kibana: *kibana
+      zookeeper: *zookeeper
+      redis: *redis
+#      cmdb:
+#          <<: *cmdb_system
+#          version: "0.1-SNAPSHOT"
+
+performance_test:
+#    <<: *profile_default
+    stack_environment: performance_test
+    cmdb_cfg : "init_json/dly/cmdb.json"
+
+
+integration_test:
+    <<: *profile_default
+    stack_environment: integration_test
+    cmdb_cfg : "init_json/dly/cmdb.json"
+
+uat:
+    stack_environment: uat
+    cmdb_cfg : "init_json/dly/cmdb-uat.json"
+
+
+branch_test:
+    stack_environment: branch
+    cmdb_cfg : "init_json/dly/cmdb-branch.json"
+
+
+production:
+    stack_environment: production
+    cmdb_cfg : "init_json/dly/cmdb-production.json"
+
+
+production-fx:
+    stack_environment: production-fx
+    cmdb_cfg : "init_json/dly/cmdb-production.json"
+
+
+branch-fx:
+    stack_environment: branch-fx
+    cmdb_cfg : "init_json/dly/cmdb-production.json"
+
+
+uat-fx:
+    stack_environment: uat-fx
+    cmdb_cfg : "init_json/dly/cmdb-production.json"
+
+sandbox:
+    stack_environment: sandbox
+    cmdb_cfg : "init_json/dly/cmdb-sandbox.json"

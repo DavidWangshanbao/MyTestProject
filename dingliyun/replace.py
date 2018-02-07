@@ -1,5 +1,10 @@
 #!/usr/bin/python
 #coding=utf-8
+
+'''
+    更新货号
+'''
+
 from __future__ import unicode_literals,print_function
 import sys
 import os

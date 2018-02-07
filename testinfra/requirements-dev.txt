@@ -1,0 +1,13 @@
+-r requirements.txt
+mock
+mockito
+nose
+nose-cov
+nose-html-reporting
+ddt
+should_dsl
+mkdocs
+proboscis
+Faker==0.8.6
+fudge==1.1.0
+pytest-html==1.16.0

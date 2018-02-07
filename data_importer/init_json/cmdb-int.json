@@ -1,0 +1,10 @@
+{
+	"datasource":{
+		"host":"rm-bp1vbelk4ehc6evsu.mysql.rds.aliyuncs.com",
+		"db":"cmdb",
+		"user":"cmdb",
+		"password":"HcshmxN5ZMPHHMuh",
+		"charset":"utf8",
+		"port" : 3306
+	}
+}

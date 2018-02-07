@@ -1,0 +1,159 @@
+# 用以标识即将发布的版本 修改版本后通知卫卫更新token相关的应用(dpos-auth,dpos,分销,bee,spider)(dpm,did)
+
+dnet_version : &dnet_version   dnet20170410
+#DOPS-1425
+#user_dir: &user_home /home/user
+## /home/user/pics
+#user_pics: !join [*user_home,"/pics"]
+
+dockerhub:
+    - "https://{0}/uidnet" # base_url format
+    - 'dnet'  #user name
+    - "ThlVjVebSKB5oTZ5" #password
+
+email_settings: &email_settings
+    default_subject: "日常巡检错误"
+    from: '千帆运维平台'
+
+jks_1000sails : &jks_1000sails "1000sails"
+jks_qianfan123 : &jks_qianfan123 "qianfan123"
+
+
+subsystems_dag:
+# 已发布
+    released:
+        "dpos-auth-web_1.9.5": ["dbo-rs_1.7" , "dmm-web_1.6" , "cmdb-rs_0.2"]
+        "dpos-auth-rs_1.9.5":  ["dbo-rs_1.7" , "dmm-web_1.6" , "cmdb-rs_0.2"]
+        "dpos-web_1.9.5": ["dpos-auth-rs_1.9.5" , "dmm-web_1.6" ,"dbo-rs_1.7" ,"cmdb-rs_0.2" ,"dpm-web_1.5"]
+        "dpos-rs_1.9.5": ["cmdb-rs_0.2" ,"dpos-auth-rs_1.9.5","dbo-rs_1.7" ]
+        "openapi_1.9.5": ["cmdb-rs_0.2","dpos-auth-rs_1.9.5"]
+        "dmm-web_1.6": ["pasoreport-web_1.2"  ,"dpos-auth-rs_1.9.5" ,"cmdb-rs_0.2"]
+        "dfm_1.1.1": [ "cvt_1.0.5" ] #bee
+        "cmdb_0.2": []
+        "dbo_1.7": ["cmdb_0.2" ,"dmm_1.5" ]
+        "app_1.0": []
+        "cvt_1.0.5": []
+        "peacock_0.1": ["cmdb_0.2"]
+
+# 待发布
+    unreleased:
+      #dnet
+        "dpos-auth-web_1.14": ["dbo-rs_1.10" , "dmm-web_1.9" , "cmdb-rs_0.3"]
+        "dpos-auth-rs_1.14":  ["dbo-rs_1.10" , "dmm-web_1.9" , "cmdb-rs_0.3"]
+        "dpos-web_1.14": ["dpos-auth-rs_1.14" , "dmm-web_1.9" ,"dbo-rs_1.10" ,"cmdb-rs_0.3" ,"dpm-web_1.5"]
+        "dpos-rs_1.14": ["cmdb-rs_0.3" ,"dpos-auth-rs_1.14","dbo-rs_1.10" ]
+        "openapi_1.14": ["cmdb-rs_0.3","dpos-auth-rs_1.14" ,"dmm-web_1.9"]
+        "dmm-web_1.9": ["pasoreport-web_1.3"  ,"dpos-auth-rs_1.14" ,"cmdb-rs_0.3"]
+        "dfm-web_1.2": ["cvt_1.0.6"] #bee
+        "cmdb-rs_0.3": []
+        "dbo-web_1.10": ["dmm-web_1.9" , "taihang-rs_0.4" ,"cmdb-rs_0.3" ,"pasoreport-web_1.3" ,"dpos-auth-rs_1.14" ]
+        "dbo-rs_1.10": ["dpos-auth-rs_1.14"]
+        "app-publisher-web_1.0": []
+        "did-web_1.4": ["dpm-web_1.5"]
+        "did-rs_1.4": ["dpm-web_1.5"]
+        "dpm-web_1.5": ["did-rs_1.4" ,"dmm-web_1.9" ]
+        "taihang-web_0.5": ["wxauth_0.16" ]
+        "member-server_1.7": ["config-server_1.12","account-server_1.12","equity-server_1.7","promotion-server_1.7","mgate-server_1.7"]
+        "mgate-server_1.7": ["config-server_1.12","account-server_1.12","member-server_1.7","equity-server_1.7","promotion-server_1.7","crm-server_1.7","wxauth-server_0.16"]
+        "promotion-server_1.7": ["config-server_1.12","account-server_1.12","equity-server_1.7","notify-server_1.7",]
+        "wxauth-server_0.16": ["config-server_1.12"]
+        "account-server_1.12": ["config-server_1.12"]
+        "config-server_1.12": []
+
+
+
+
+
+infrastructure_systems:
+      filebeat: &filebeat
+               version : 1.2.2_redis
+               images : [filebeat]
+               labels:
+                  deployment: 'default'
+      logstash: &logstash
+               version : 2.3.2
+               images : [logstash]
+               labels:
+                  deployment: 'default'
+      elasticsearch: &elasticsearch
+               version : 2.3.2
+               images : [elasticsearch]
+               labels:
+                  deployment: 'default'
+      kibana: &kibana
+               version : 4.5.0
+               images : [kibana]
+               labels:
+                  deployment: 'default'
+      rumbaoss: &rumbaoss
+               version : "1.0"
+               images : [rumba-oss-server]
+               labels:
+                  deployment: 'default'
+
+profile_default: &profile_default
+   dnet_version: *dnet_version
+   cmdb_cfg : null
+   stack_environment : null
+   email_settings : *email_settings
+#   rds_upgrade: *rds_upgrade
+   ssh_port: "60501"
+
+
+active_profile: smoke_test
+base_profile: smoke_test
+product: dnet
+
+
+# 冒烟测试配置
+smoke_test :
+#   标识DNET版本,生产环境部署时间，日志Logger类会使用到
+   <<: *profile_default
+   stack_environment : dnet_smoke
+   cmdb_cfg : "init_json/cmdb.json"
+   cmdb_data_upgrade : "init_sql/cmdb_upgrade_1_10_data.py"
+
+
+# 集成测试配置
+integration_test :
+   cmdb_cfg : "init_json/cmdb-int.json"
+   stack_environment : dnet_integration
+
+
+# 性能测试配置
+performance_test :
+   cmdb_cfg : "init_json/cmdb-performance.json"
+   stack_environment : dnet_performance
+
+# UAT测试配置
+uat :
+   cmdb_cfg : "init_json/cmdb-uat.json"
+   stack_environment : dnet_uat
+
+# 分支测试配置
+branch_test :
+   cmdb_cfg : "init_json/cmdb-branch.json"
+   stack_environment : dnet_branch
+
+# 生产测试配置
+production :
+   cmdb_cfg : "init_json/cmdb-production.json"
+   stack_environment : dnet
+
+# 集成测试配置
+dly_integration_test :
+
+   cmdb_cfg : "init_json/dly/cmdb.json"
+   stack_environment : dly_integration_test
+
+# 分支测试配置
+dly_branch_test :
+   cmdb_cfg : "init_json/dly/cmdb.json"
+   stack_environment : dly_branch_test
+
+
+# 生产配置
+dly_production :
+
+   cmdb_cfg : "init_json/dly/cmdb-dly_production.json"
+   stack_environment : dly_production

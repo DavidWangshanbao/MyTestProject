@@ -1,0 +1,10 @@
+{
+	"datasource":{
+		"host":"rm-bp1vbelk4ehc6evsu.mysql.rds.aliyuncs.com",
+		"db":"global",
+		"user":"global",
+		"password":"4V5T4B7UJeTc23Cy",
+		"charset":"utf8" ,
+		"port" : 3306
+	}
+}

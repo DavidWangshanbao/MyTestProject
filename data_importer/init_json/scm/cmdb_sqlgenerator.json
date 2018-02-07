@@ -1,0 +1,17 @@
+{
+  "dockerHub": null,
+  "stack":    {"type": "shop","environment": "dnet_branch","dbCount": 200,"shopCountPerDb": 15,"currentShopCount": 3000},
+   "oss": [{ "url":"http://img-cn-qingdao.aliyuncs.com","internalurl":"http://img-cn-qingdao.aliyuncs.com", "bucketName":"dpos-test","objectBaseUrl":"http://dpos-test.oss-cn-qingdao.aliyuncs.com"}],
+  "redis" : [{"publicIp":"120.26.94.72","intranetIp":"10.51.5.226","port":6380,"password":"www.hd123.com@dnet","image":"dpos-web","db":"1"}],
+  "opensearch" : [{"shopsku":"t01b_branch_shopsku","platShopsku":"dnet_branch_platformsku"}],
+  "hostsCfg":{"ips":["114.55.4.13"]},
+  "containerCfg":{
+    "start_port":8001,
+    "ips":[
+      {"114.55.4.13" : ["dpos-web","filebeat"]}
+    ]
+  },
+  "rds":[
+    {"ip":"rm-bp1ph5u9g0h3pl8nf.mysql.rds.aliyuncs.com", "port":3306, "username":"db0", "password":"dnetdb0", "rdsInstanceId":"rm-bp1ph5u9g0h3pl8nf"}
+  ]
+}
