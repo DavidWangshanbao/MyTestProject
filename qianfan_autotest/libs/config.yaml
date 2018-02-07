@@ -1,0 +1,60 @@
+#profiles: integration_test, branch_test
+# NOTE: Variable names should be letters, numbers, and underscores. Variables should always start with a letter.
+integration_test:
+    koala:
+      base_url: "https://z01c-test.qianfan123.com/payman-web"
+    dove:
+      base_url: "https://x01c-test.qianfan123.com:8305/smc-web"
+    pig:
+      base_url: "https://w01c-test.qianfan123.com:8304/prepay-web"
+    ladybird:
+      base_url: "https://y01c-test.qianfan123.com/points-web"
+    butterfly:
+      base_url: "https://v01c-test.qianfan123.com:8303/coupon-web"
+    swan:
+      base_url: "https://swan-test.qianfan123.com/showwin-web"
+    did:
+      base_url: "http://did-test.qianfan123.com:8010/did-web"
+    dpm:
+      base_url: "https://dpm-test.qianfan123.com:8313/dpm-web/1/dpm"
+    peakcock:
+      base_url: "https://t01c-test.qianfan123.com:8301/mp-web"
+    dcmdb:
+      base_url: "http://auth-test.qianfan123.com:8005/cmdb-rs"
+    spider:
+      base_url: "https://u01c-test.qianfan123.com:8302/mbr-web"
+    lion:
+      base_url: "https://auth-test.qianfan123.com/dpos-auth-web"
+    alps:
+      base_url: "http://172.17.11.142:8000"
+    dmm:
+      base_url: "https://dmm-test.qianfan123.com:8311/dmm-web/"
+      db_connection:
+          dmm:
+            host: rm-bp1s46kgb498pt74n3o.mysql.rds.aliyuncs.com
+            port: 3306
+            user: plat
+            password: mysqlplat
+            db: dmm
+            charset: utf8
+          plat:
+            host: rm-bp1s46kgb498pt74n3o.mysql.rds.aliyuncs.com
+            port: 3306
+            user: plat
+            password: mysqlplat
+            db: plat
+            charset: utf8
+          dbo:
+            host: rm-bp1s46kgb498pt74n3o.mysql.rds.aliyuncs.com
+            port: 3306
+            user: plat
+            password: mysqlplat
+            db: dbodb
+            charset: utf8
+    dbo:
+      base_url: "https://dbo-test.qianfan123.com:8307/dbo-web/"
+branch_test:
+    dmm:
+      base_url: "xxx"
+    dbo:
+      base_url: "yyy"
