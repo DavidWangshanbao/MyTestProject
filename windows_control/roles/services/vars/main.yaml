@@ -1,0 +1,19 @@
+---
+
+##服务名配置
+service_name: VMnetDHCP
+
+#服务状态，支持：started,stopped,restarted,absent,paused
+service_status: started
+
+#服务的启动状态 支持：auto,manual,disabled,delayed
+service_mode: manual
+
+##服务之间的依赖管理，接受列表参数，否则为NULL
+# 设置该服务的依赖
+dependent_services: NULL  #['VMware NAT Service','WebClient'] 
+# 增加该服务的依赖服务
+add_dependence: NULL   #['SDRSVC'] 
+# 移除该服务的依赖服务
+remove_dependence: NULL  #['WebClient']  
+

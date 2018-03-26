@@ -1,0 +1,10 @@
+---
+
+# 模式  支持  del_dir,del_file,add_dir,add_file
+oper_mode: add_dir
+
+# 删除某个文件夹、文件夹下所有文件或者某个文件
+path: f:\test2
+# 注意在del_file模式下，如果只录入文件夹名，会删除该文件夹下的所有文件
+
+

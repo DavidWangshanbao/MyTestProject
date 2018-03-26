@@ -1,0 +1,70 @@
+---
+
+## 服务之间的依赖关系
+##设置依赖关系
+- name: "set {{ dependent_services }} Service dependencies for {{ service_name }} service"
+  win_service: 
+    name: "{{ service_name }}"
+    dependencies: "{{ dependent_services }}"
+  register: ser_info
+  when: dependent_services
+
+- name: query dependencies info after set
+  debug:
+    var: ser_info.dependencies
+  when: dependent_services
+  
+###增加依赖
+- name: "add {{ add_dependence }} Service dependencies for {{ service_name }} service"
+  win_service: 
+    name: "{{ service_name }}"
+    dependencies: "{{ add_dependence }}"
+    dependency_action: add   
+  register: ser_info
+  when: add_dependence 
+
+- name: query dependencies info after add
+  debug:
+    var: ser_info.dependencies
+  when: remove_dependence
+
+###删除依赖
+- name: "remove {{ remove_dependence }} Service dependencies for {{ service_name }} service"
+  win_service: 
+    name: "{{ service_name }}"
+    dependencies: "{{ remove_dependence }}"
+    dependency_action: remove 
+  register: ser_info
+  when: remove_dependence
+
+
+- name: query dependencies info after remove
+  debug:
+    var: ser_info.dependencies
+  when: remove_dependence
+# # dependency_action默认为set，再次set时会覆盖原有的
+
+
+# ## 服务之间的强行依赖关系
+# ###先设置依赖关系
+# - name: set VMware NAT Service dependencies to VMnetDHCP service
+#   win_service: 
+#     name: VMnetDHCP
+#     dependencies: ['VMware NAT Service']
+#   register: ser_info
+
+# ##在重启或者停止时，声明强行依赖关系，True，被依赖的服务也会关闭，False时操作会报错
+# - name: stop dependencies service
+#   win_service: 
+#     name: "VMware NAT Service"
+#     force_dependent_services: True
+#     state: stopped
+
+# - name: set VMware NAT Service dependencies to VMnetDHCP service
+#   win_service: 
+#     name: VMnetDHCP
+#   register: ser_info
+
+# - name: query dependencies info after set
+#   debug:
+#     var: ser_info.state

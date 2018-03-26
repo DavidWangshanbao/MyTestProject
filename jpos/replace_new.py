@@ -22,14 +22,17 @@ def replace():
         shutil.copyfile('d:\\jpos\docker\\release\\hnabl\\'+i,project_name+'\\'+i)
 
 
-    ####替换posboSettings.xml文件配置
-
+    ###替换posboSettings.xml文件配置
     with open(project_name+"/posboSettings.xml","r") as fb:
         buf = fb.read()
 
-    buf = re.sub(r'http://\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+/pfs-server','http://172.17.2.41:8680/pfs-server',buf,re.M|re.I)
-    buf = re.sub(r'http://\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+/OTTER','http://172.17.2.41:8580/OTTER',buf,re.M|re.I)
-    buf = re.sub(r'<storeStockAdjustOrderService>\s*.*\s*</storeStockAdjustOrderService>', '', buf, re.M | re.I)
+    buf = re.sub(r'http://\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+/pfs-server','http://172.17.2.41:8680/pfs-server',buf,0,re.M|re.I)
+    buf = re.sub(r'http://\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+/OTTER','http://172.17.2.41:8580/OTTER',buf,0,re.M|re.I)
+    buf = re.sub(r'<storeStockAdjustOrderService>\s*.*\s*</storeStockAdjustOrderService>', '', buf,0,re.M | re.I)
+    ##删除ftpservers和downloadservers相关配置
+    buf = re.sub(r'<ftpservers>.*</ftpservers>', '', buf,0, re.M | re.I | re.S)  #注意re.S标志
+    buf = re.sub(r'<downloadservers>.*</downloadservers>', '', buf,0, re.M | re.I | re.S)
+
     with open(project_name+"/posboSettings.xml", "w") as fb:
         fb.write(buf)
 
@@ -42,13 +45,13 @@ def replace():
     buf = re.sub(r'<property name="maxWait" value="\d*"></property>', '<property name="maxWait" value="10000"></property>', buf,1,re.M | re.I)
 
     ##数据库地址配置
-    buf = re.sub(r'\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+:[\d\w]+', '172.17.12.9:1521:pos4stanew', buf, re.M | re.I)
-    buf = re.sub(r'<property name="username" value=".*" />', '<property name="username" value="hd40" />', buf, re.M | re.I)
-    buf = re.sub(r'<property name="password" value=".*" />', '<property name="password" value="hd40" />', buf, re.M | re.I)
+    buf = re.sub(r'\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+:[\d\w]+', '172.17.12.9:1521:pos4stanew', buf,0, re.M | re.I)
+    buf = re.sub(r'<property name="username" value=".*" />', '<property name="username" value="hd40" />', buf,0, re.M | re.I)
+    buf = re.sub(r'<property name="password" value=".*" />', '<property name="password" value="hd40" />', buf,0, re.M | re.I)
 
 
     ##otter地址配置
-    buf = re.sub(r'http://\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+/OTTER', 'http://172.17.2.41:8580/OTTER', buf, re.M | re.I)
+    buf = re.sub(r'http://\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3}:\d+/OTTER', 'http://172.17.2.41:8580/OTTER', buf,0,re.M | re.I)
 
     with open(project_name+"/datasource.xml","w") as fb:
         fb.write(buf)

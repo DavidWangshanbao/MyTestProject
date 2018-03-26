@@ -1,0 +1,35 @@
+---
+
+## 使用cmd删除，当指定文件夹名称是删除指定文件夹下的所有文件，不删除文件夹本身，指定文件名时，删除指定文件
+- name: "remove {{path}} file by cmd"
+  win_shell: "del /s /q {{path}}"
+  args: 
+    executable: cmd
+  when: oper_mode == "del_file"
+
+# 使用file模块，删除指定文件夹及其文件夹内的所有文件
+- name: "remove {{path}} directory"  
+  win_file: 
+    path: "{{path}}"
+    state: absent
+  when: oper_mode == "del_dir"
+
+## 使用Powershell删除
+# - name: remove all file under f:\test by Powershell
+#   win_shell: "del {{path}}"
+  
+
+## 创建新文件
+- name: "create {{path}} new file "
+  win_file:
+    path: "{{path}}"
+    state: touch
+  when: oper_mode == "add_file"
+
+## 创建新文件夹
+- name: "create {{path}} directory"
+  win_file: 
+    path: "{{path}}"
+    state: directory
+  when: oper_mode == "add_dir"
+

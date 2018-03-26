@@ -1,0 +1,12 @@
+---
+
+##服务的状态控制及模式
+- include: status.yaml
+
+##服务依赖
+- include: ser_dep.yaml 
+
+
+
+    
+
