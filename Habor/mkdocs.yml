@@ -1,0 +1,69 @@
+site_name: 连锁零售KA产品部署
+pages:
+- 仓库镜像列表: "index.md"
+- DTS: 
+  - dts-store: "dts-store/dts-store.md"
+  - dts-store-rdb-setup: "dts-store/ts-store-rdb-setup.md"
+  - dts-store-rdb-upgrade: "dts-store/dts-store-rdb-upgrade.md"
+  - dts-store-wanda: "dts-store/dts-store-wanda.md"
+  - dts-store-wanda-rdb-setup: "dts-store/dts-store-wanda-rdb-setup.md"
+  - dts-store-wanda-rdb-upgrade: "dts-store/dts-store-wanda-rdb-upgrade.md"
+  - panther-dts-server: "dts-store/panther-dts-server.md"
+  - panther-task-server: "dts-store/panther-task-server.md"
+  - panther-web: "dts-store/panther-web.md"
+  - panther-dts-server: "dts-store/panther-dts-server.md"
+  - panther-dts-server: "dts-store/panther-dts-server.md"
+  - panther-dts-server: "dts-store/panther-dts-server.md"
+  - panther-dts-server: "dts-store/panther-dts-server.md"
+- component: 
+  - factoring: "component/factoring.md"
+  - kafka: "component/kafka.md"
+  - mysql: "component/mysql.md"
+  - pasoreport-mysql: "component/pasoreport-mysql.md"
+  - pasoreport-redis: "component/pasoreport-redis.md"
+  - pasoreport-web: "component/pasoreport-web.md"
+  - pasoreport-rdb-setup: "component/pasoreport-rdb-setup.md"
+  - pasoreport-rdb-upgrade: "component/pasoreport-rdb-upgrade.md"
+  - eaccount-server: "component/eaccount-server.md"
+  - pasoreport-web: "component/pasoreport-web.md"
+  - elasticsearch: "component/elasticsearch.md"
+  - postgres: "component/postgres.md"
+  - uc-connector: "component/uc-connector.md"
+  - qfscm-connector: "component/qfscm-connector.md"
+  - h4rest: "component/h4rest.md"
+- adi:
+  - adi: "adi/adi.md"
+- azkaban:
+  - azkaban: "azkaban/azkaban.md"
+  - azkaban-executor: "azkaban/azkaban-executor.md"
+  - azkaban-webserver: "azkaban/azkaban-webserver.md"
+- card:
+  - card: "card/card.md"
+  - card-tran: "card/card-tran.md"
+  - card-zuul: "card/card-zuul.md"
+  - cardserver: "card/cardserver.md"
+- hdpos46:
+  - hdpos4-dist: "hdpos46/hdpos4-dist.md"
+  - hdpos4-rdb-setup: "hdpos46/hdpos4-rdb-setup.md"
+  - hdpos4-rdb-upgrade: "hdpos46/hdpos4-rdb-upgrade.md"
+  - hdpos4-wanda-rdb-setup: "hdpos46/hdpos4-wanda-rdb-setup.md"
+  - hdpos4-wanda-rdb-upgrade: "hdpos46/hdpos4-wanda-rdb-upgrade.md"
+  - hdpos4-mincha-dist: "hdpos46/hdpos4-mincha-dist.md"
+  - hdpos4-mincha-rdb-upgrade: "hdpos46/hdpos4-mincha-rdb-upgrade.md"
+  - hdpos4-mincha-rdb-setup: "hdpos46/hdpos4-mincha-rdb-setup.md"
+  - vipshop-web: "hdpos46/vipshop-web.md"
+- ia:
+  - ia: "ia/ia.md"
+- jcrm:
+  - jcrm-server-card: "jcrm/jcrm-server-card.md"
+- jposbo:
+  - jposbo: "jposbo/jposbo.md"
+- otter:
+  - otter-r3-std: "otter/otter-r3-std.md"
+  - cable-dist: "otter/cable-dist.md"
+  - cable-rdb-setup: "otter/cable-rdb-setup.md"
+  - cable-rdb-upgrade: "otter/cable-rdb-upgrade.md"
+- pfs:
+  - pfs: "pfs/pfs.md"
+  - pfs-minter: "pfs/pfs-minter.md"
+theme: readthedocs
