@@ -9,14 +9,13 @@ from docker.harborclient import HarborClient
 import humanfriendly
 from markdowntohtml.MarkdownPreview import MarkdownCompiler, save_utf8
 import codecs
+from gen_jposbo_wiki import gen_jposbo_wiki
 
 import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
 allfile = []
-
-
 
 def time_format(time_str):
     dt = arrow.get(time_str)
@@ -130,7 +129,6 @@ def get_allrepositorys(client,all_projects_name):
     return all_repositorys_name
 
 
-
 def wrt_index_file(client):
     #写入index.md
     current_path = os.path.abspath('.')
@@ -166,8 +164,12 @@ def wrt_tags_file(client,reponame_list):
         with open(file_path,'a') as new_file:
             new_file.write("| {} | {} | {} | \n".format(repo_name,repo_tags_count,repo_pull_count))
             new_file.write("| 标签 | 大小 | 创建时间 |"+"\n")
-            for i in sorted(repo_name_tags,key=lambda x:x['created'],reverse=True):
-                new_file.write("| {} | {} | {} | \n".format(i["name"], humanfriendly.format_size(i["size"]), time_format(i["created"])))
+        if repo_name == "jposbo/jposbo":
+            gen_jposbo_wiki()
+        else:
+            with open(file_path, 'a') as new_file:
+                for i in sorted(repo_name_tags,key=lambda x:x['created'],reverse=True):
+                    new_file.write("| {} | {} | {} | \n".format(i["name"], humanfriendly.format_size(i["size"],binary=True), time_format(i["created"])))
 
 
 def main():

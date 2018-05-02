@@ -44,8 +44,6 @@ class Confluence(object):
 
         """
 
-
-
         def findfile(path):
             """
             Find the file named path in the sys.path.
